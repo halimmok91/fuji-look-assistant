@@ -21,7 +21,7 @@ warnings.filterwarnings("ignore")
 # A realistic Fujifilm recipe direction + tuning assistant.
 # ==========================================================
 
-APP_VERSION = "1.1-dark"
+APP_VERSION = "1.2-black-gold"
 
 XTRANS_IV_SIMS = [
     "Provia / Standard",
@@ -575,39 +575,55 @@ st.set_page_config(
 
 CUSTOM_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-:root { --fuji-red:#e31b23; --panel:rgba(18,19,22,.96); --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.16); --text:#f5f5f2; --muted:#a7a7a1; --dim:#71716c; --accent:#e31b23; --accent-dark:#8f1016; }
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root { --black:#020202; --graphite:#101010; --gold:#d6aa45; --gold-2:#f2d37a; --gold-dark:#8f6721; --text:#f7f1e3; --muted:#b8ad98; --dim:#7f7465; --line:rgba(214,170,69,.20); --line-strong:rgba(242,211,122,.38); --panel:rgba(11,11,11,.96); }
 html, body, [class*="css"] { font-family:'Inter',sans-serif; }
-.stApp { background: radial-gradient(circle at 18% 0%, rgba(227,27,35,.18), transparent 30%), radial-gradient(circle at 88% 18%, rgba(255,255,255,.055), transparent 26%), linear-gradient(135deg,#030304 0%,#08090b 48%,#111216 100%); color:var(--text); }
-.block-container { padding-top:2rem; max-width:1320px; }
-.hero { position:relative; overflow:hidden; background:linear-gradient(135deg,rgba(20,21,24,.98) 0%,rgba(9,10,12,.98) 52%,rgba(36,9,11,.95) 100%); border-radius:26px; padding:34px 38px; color:var(--text); border:1px solid var(--line-strong); box-shadow:0 28px 90px rgba(0,0,0,.46); margin-bottom:22px; }
-.hero:before { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.04) 52%,transparent 100%); pointer-events:none; }
-.hero h1 { font-size:3.05rem; line-height:.98; margin:0 0 12px 0; letter-spacing:-.065em; font-weight:900; }
-.hero p { color:rgba(245,245,242,.72); font-size:1.05rem; margin:0; max-width:880px; }
-.fuji-mark { display:inline-flex; align-items:center; gap:10px; background:rgba(227,27,35,.14); border:1px solid rgba(227,27,35,.48); color:#fff; border-radius:999px; padding:7px 12px; font-weight:850; font-size:.80rem; margin-bottom:18px; letter-spacing:.08em; }
-.card { background:linear-gradient(180deg,var(--panel) 0%,rgba(12,13,15,.96) 100%); border:1px solid var(--line); border-radius:24px; padding:24px; box-shadow:0 18px 50px rgba(0,0,0,.36); color:var(--text); }
-.metric-card { background:linear-gradient(180deg,rgba(255,255,255,.055) 0%,rgba(255,255,255,.025) 100%); border:1px solid var(--line); border-radius:16px; padding:14px 16px; min-height:88px; }
-.metric-label { color:var(--dim); font-size:.76rem; text-transform:uppercase; letter-spacing:.09em; font-weight:850; }
-.metric-value { color:var(--text); font-size:1.22rem; font-weight:850; margin-top:5px; }
-.recipe-title { color:var(--text); font-size:1.85rem; letter-spacing:-.045em; line-height:1.08; margin:10px 0 4px 0; font-weight:900; }
-.badge { display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.08); color:var(--text); font-size:.76rem; font-weight:850; border:1px solid var(--line); }
-.fit-badge { background:var(--accent); color:#fff; border-color:rgba(255,255,255,.10); }
-.setting-row { display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid rgba(255,255,255,.075); padding:12px 0; }
+.stApp { background: radial-gradient(circle at 18% 0%, rgba(214,170,69,.16), transparent 28%), radial-gradient(circle at 82% 12%, rgba(242,211,122,.08), transparent 26%), linear-gradient(135deg,#000 0%,#050505 44%,#101010 100%); color:var(--text); }
+.block-container { padding-top:2rem; max-width:1340px; }
+.hero { position:relative; overflow:hidden; background:linear-gradient(135deg,rgba(6,6,6,.98) 0%,rgba(13,13,13,.98) 54%,rgba(28,20,8,.96) 100%); border-radius:30px; padding:42px 44px; color:var(--text); border:1px solid var(--line-strong); box-shadow:0 34px 110px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.04); margin-bottom:24px; }
+.hero:before { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent 0%,rgba(242,211,122,.08) 50%,transparent 100%), repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0,rgba(255,255,255,.018) 1px,transparent 1px,transparent 16px); pointer-events:none; }
+.hero:after { content:""; position:absolute; right:-90px; bottom:-110px; width:360px; height:360px; border:1px solid rgba(214,170,69,.18); border-radius:50%; box-shadow:0 0 0 28px rgba(214,170,69,.025), 0 0 0 62px rgba(214,170,69,.018); pointer-events:none; }
+.hero-inner { position:relative; z-index:1; }
+.hero h1 { font-family:'Cinzel',serif; font-size:3.15rem; line-height:1.02; margin:0 0 14px 0; letter-spacing:-.035em; font-weight:900; background:linear-gradient(180deg,#fff8e5 0%,#d6aa45 48%,#8f6721 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero p { color:rgba(247,241,227,.76); font-size:1.06rem; margin:0; max-width:890px; }
+.lux-mark { display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,rgba(214,170,69,.18),rgba(242,211,122,.06)); border:1px solid var(--line-strong); color:var(--gold-2); border-radius:999px; padding:8px 14px; font-weight:900; font-size:.78rem; margin-bottom:20px; letter-spacing:.16em; text-transform:uppercase; box-shadow:0 12px 28px rgba(0,0,0,.28); }
+.card { background:linear-gradient(180deg,var(--panel) 0%,rgba(5,5,5,.97) 100%); border:1px solid var(--line); border-radius:26px; padding:25px; box-shadow:0 22px 64px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.035); color:var(--text); }
+.metric-card { background:linear-gradient(180deg,rgba(214,170,69,.08) 0%,rgba(255,255,255,.025) 100%); border:1px solid rgba(214,170,69,.18); border-radius:18px; padding:15px 16px; min-height:90px; }
+.metric-label { color:var(--dim); font-size:.74rem; text-transform:uppercase; letter-spacing:.11em; font-weight:900; }
+.metric-value { color:var(--text); font-size:1.18rem; font-weight:900; margin-top:6px; }
+.recipe-title { font-family:'Cinzel',serif; color:var(--gold-2); font-size:1.92rem; letter-spacing:-.025em; line-height:1.08; margin:12px 0 6px 0; font-weight:800; }
+.badge { display:inline-block; padding:7px 11px; border-radius:999px; background:rgba(214,170,69,.10); color:var(--gold-2); font-size:.75rem; font-weight:900; border:1px solid rgba(214,170,69,.28); letter-spacing:.04em; }
+.fit-badge { background:linear-gradient(135deg,var(--gold) 0%,var(--gold-dark) 100%); color:#080808; border-color:rgba(242,211,122,.52); }
+.setting-row { display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid rgba(214,170,69,.13); padding:12px 0; }
 .setting-label { color:var(--muted); font-weight:650; font-size:.92rem; }
-.setting-value { color:var(--text); font-weight:850; font-size:.98rem; text-align:right; }
-.palette-dot { display:inline-block; width:34px; height:34px; border-radius:50%; border:2px solid rgba(255,255,255,.16); margin-right:7px; vertical-align:middle; box-shadow:0 8px 18px rgba(0,0,0,.28); }
+.setting-value { color:var(--text); font-weight:900; font-size:.98rem; text-align:right; }
+.palette-dot { display:inline-block; width:34px; height:34px; border-radius:50%; border:2px solid rgba(214,170,69,.36); margin-right:7px; vertical-align:middle; box-shadow:0 9px 20px rgba(0,0,0,.42); }
 .small-muted { color:var(--muted); font-size:.93rem; }
-.stButton>button, .stDownloadButton>button { border-radius:999px!important; font-weight:850!important; border:1px solid var(--line-strong)!important; background:rgba(255,255,255,.055)!important; color:var(--text)!important; }
-.stButton>button:hover, .stDownloadButton>button:hover { border-color:rgba(227,27,35,.75)!important; color:#fff!important; }
-.stButton>button[kind="primary"] { background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%)!important; color:white!important; border-color:rgba(255,255,255,.14)!important; }
-section[data-testid="stSidebar"] { background:linear-gradient(180deg,#070708 0%,#111215 58%,#0a0a0b 100%); border-right:1px solid var(--line); }
+.stButton>button, .stDownloadButton>button { border-radius:999px!important; font-weight:900!important; border:1px solid rgba(214,170,69,.30)!important; background:linear-gradient(180deg,rgba(214,170,69,.10),rgba(255,255,255,.025))!important; color:var(--text)!important; }
+.stButton>button:hover, .stDownloadButton>button:hover { border-color:rgba(242,211,122,.75)!important; color:var(--gold-2)!important; transform:translateY(-1px); }
+.stButton>button[kind="primary"] { background:linear-gradient(135deg,var(--gold-2) 0%,var(--gold) 42%,var(--gold-dark) 100%)!important; color:#070707!important; border-color:rgba(255,255,255,.14)!important; box-shadow:0 16px 38px rgba(214,170,69,.18)!important; }
+section[data-testid="stSidebar"] { background:linear-gradient(180deg,#000 0%,#080808 54%,#111 100%); border-right:1px solid var(--line); }
 section[data-testid="stSidebar"] * { color:var(--text); }
 section[data-testid="stSidebar"] .stCaption, section[data-testid="stSidebar"] p { color:var(--muted)!important; }
 section[data-testid="stSidebar"] .stRadio label { color:var(--text)!important; }
 hr { border:none; border-top:1px solid var(--line); }
 h1,h2,h3,[data-testid="stMarkdownContainer"] h1,[data-testid="stMarkdownContainer"] h2,[data-testid="stMarkdownContainer"] h3 { color:var(--text); }
-[data-testid="stFileUploader"] { background:rgba(255,255,255,.035); border-radius:18px; border:1px solid var(--line); padding:8px; }
-[data-testid="stAlert"] { background:rgba(227,27,35,.10); border:1px solid rgba(227,27,35,.22); color:var(--text); }
+[data-testid="stFileUploader"] { background:rgba(214,170,69,.045); border-radius:20px; border:1px solid rgba(214,170,69,.18); padding:8px; }
+[data-testid="stAlert"] { background:rgba(214,170,69,.09); border:1px solid rgba(214,170,69,.20); color:var(--text); }
+a { color:var(--gold-2)!important; text-decoration:none; }
+a:hover { color:#fff2c2!important; text-decoration:none; }
+.social-footer { margin-top:22px; padding:28px 30px; border-radius:28px; background:linear-gradient(135deg,rgba(6,6,6,.98),rgba(20,16,8,.96)); border:1px solid var(--line-strong); box-shadow:0 24px 70px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.035); }
+.social-footer h3 { font-family:'Cinzel',serif; color:var(--gold-2); margin:0 0 8px 0; font-size:1.35rem; }
+.social-footer p { color:var(--muted); margin:0 0 18px 0; }
+.social-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.social-card { display:flex; align-items:center; gap:12px; padding:14px 15px; border-radius:18px; background:rgba(255,255,255,.035); border:1px solid rgba(214,170,69,.18); color:var(--text)!important; transition:all .18s ease; }
+.social-card:hover { transform:translateY(-2px); border-color:rgba(242,211,122,.62); background:rgba(214,170,69,.08); }
+.social-icon { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--gold-2),var(--gold-dark)); color:#060606; font-weight:950; flex:0 0 auto; }
+.social-name { display:block; font-weight:900; font-size:.94rem; }
+.social-handle { display:block; color:var(--muted); font-size:.78rem; margin-top:2px; }
+.footer-note { color:var(--dim); font-size:.78rem; margin-top:16px; }
+@media (max-width: 900px) { .hero h1{font-size:2.2rem;} .hero{padding:30px 26px;} .social-grid{grid-template-columns:1fr 1fr;} }
+@media (max-width: 560px) { .social-grid{grid-template-columns:1fr;} }
 </style>
 """
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
@@ -615,9 +631,11 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 st.markdown(
     """
     <div class="hero">
-      <div class="fuji-mark">🎞️ FUJI LOOK ASSISTANT</div>
-      <h1>Find the Fuji look direction.<br/>Build a stronger JPEG recipe.</h1>
-      <p>Upload a reference image and get a professional Fujifilm starting recipe, visual diagnosis, and top alternatives. Designed as a serious starting-point assistant — not a fake exact-match detector.</p>
+      <div class="hero-inner">
+        <div class="lux-mark">◆ FUJI LOOK ASSISTANT</div>
+        <h1>Premium Fujifilm JPEG<br/>look direction studio.</h1>
+        <p>Upload a reference image and receive a refined Fujifilm recipe direction, visual diagnosis, and sensor-safe starting point for X-Trans IV or X-Trans V.</p>
+      </div>
     </div>
     """,
     unsafe_allow_html=True,
@@ -631,8 +649,8 @@ with st.sidebar:
     st.markdown(f"**{len(sims)}** film simulation menu items")
     st.markdown(f"**{len(sensor_presets(sensor_code))}** look directions")
     st.divider()
-    st.markdown("## 🧭 Philosophy")
-    st.caption("This app now recommends a starting point and a tuning path. That is more realistic than claiming one uploaded image can reveal an exact recipe.")
+    st.markdown("## 🧭 Studio Note")
+    st.caption("Fuji Look Assistant recommends a refined starting point based on colour, tone, contrast, mood, and sensor compatibility.")
 
 left, right = st.columns([.92, 1.08], gap="large")
 
@@ -773,4 +791,31 @@ with right:
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
-st.caption("Fuji Look Assistant is a practical recipe direction tool. Real camera output still depends on lighting, exposure, lens, sensor, white balance, and the JPEG engine.")
+st.markdown(
+    """
+    <div class="social-footer">
+      <h3>Connect with Halim</h3>
+      <p>Follow the project, share feedback, or reach out for Fujifilm JPEG look experiments and visual direction.</p>
+      <div class="social-grid">
+        <a class="social-card" href="https://www.facebook.com/halim91/" target="_blank">
+          <span class="social-icon">f</span>
+          <span><span class="social-name">Facebook</span><span class="social-handle">halim91</span></span>
+        </a>
+        <a class="social-card" href="https://www.instagram.com/halimmok" target="_blank">
+          <span class="social-icon">◎</span>
+          <span><span class="social-name">Instagram</span><span class="social-handle">@halimmok</span></span>
+        </a>
+        <a class="social-card" href="https://www.threads.com/@halimmok" target="_blank">
+          <span class="social-icon">@</span>
+          <span><span class="social-name">Threads</span><span class="social-handle">@halimmok</span></span>
+        </a>
+        <a class="social-card" href="mailto:halim.jamal91@gmail.com">
+          <span class="social-icon">✉</span>
+          <span><span class="social-name">Gmail</span><span class="social-handle">halim.jamal91@gmail.com</span></span>
+        </a>
+      </div>
+      <div class="footer-note">Fuji Look Assistant is a practical recipe direction tool. Real camera output still depends on lighting, exposure, lens, sensor, white balance, and the JPEG engine.</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
