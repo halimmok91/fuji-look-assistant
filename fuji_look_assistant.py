@@ -21,7 +21,54 @@ warnings.filterwarnings("ignore")
 # A realistic Fujifilm recipe direction + tuning assistant.
 # ==========================================================
 
-APP_VERSION = "1.2-black-gold"
+APP_VERSION = "1.3-black-gold-xtrans-all"
+
+# Sensor-safe film simulation menus. Some individual camera bodies/firmware may vary,
+# but these lists keep recommendations realistic for each X-Trans generation.
+XTRANS_I_SIMS = [
+    "Provia / Standard",
+    "Velvia / Vivid",
+    "Astia / Soft",
+    "Pro Neg. Hi",
+    "Pro Neg. Std",
+    "Monochrome",
+    "Monochrome + Ye Filter",
+    "Monochrome + R Filter",
+    "Monochrome + G Filter",
+    "Sepia",
+]
+
+XTRANS_II_SIMS = [
+    "Provia / Standard",
+    "Velvia / Vivid",
+    "Astia / Soft",
+    "Classic Chrome",
+    "Pro Neg. Hi",
+    "Pro Neg. Std",
+    "Monochrome",
+    "Monochrome + Ye Filter",
+    "Monochrome + R Filter",
+    "Monochrome + G Filter",
+    "Sepia",
+]
+
+XTRANS_III_SIMS = [
+    "Provia / Standard",
+    "Velvia / Vivid",
+    "Astia / Soft",
+    "Classic Chrome",
+    "Pro Neg. Hi",
+    "Pro Neg. Std",
+    "Acros",
+    "Acros + Ye Filter",
+    "Acros + R Filter",
+    "Acros + G Filter",
+    "Monochrome",
+    "Monochrome + Ye Filter",
+    "Monochrome + R Filter",
+    "Monochrome + G Filter",
+    "Sepia",
+]
 
 XTRANS_IV_SIMS = [
     "Provia / Standard",
@@ -67,6 +114,24 @@ XTRANS_V_SIMS = [
     "Monochrome + G Filter",
     "Sepia",
 ]
+
+SENSOR_SIM_MAP = {
+    "I": XTRANS_I_SIMS,
+    "II": XTRANS_II_SIMS,
+    "III": XTRANS_III_SIMS,
+    "IV": XTRANS_IV_SIMS,
+    "V": XTRANS_V_SIMS,
+}
+
+SENSOR_LABEL_MAP = {
+    "I": "X-Trans I",
+    "II": "X-Trans II",
+    "III": "X-Trans III",
+    "IV": "X-Trans IV",
+    "V": "X-Trans V",
+}
+
+LEGACY_SENSORS = {"I", "II", "III"}
 
 
 @dataclass
@@ -141,6 +206,12 @@ RECIPE_PRESETS: List[RecipePreset] = [
     _preset("Acros - Deep Street B&W", "black white contrast", "Acros + R Filter", "BOTH", "Strong Large", "Off", "Off", "Auto", 0, 0, "DR400", 1, 3, 0, 2, -4, 3, "Auto up to 6400", "0", {"warmth": .50, "tint": .50, "sat": .02, "contrast": .85, "brightness": .40, "softness": .22, "vintage": .65, "cinematic": .80}, "B&W street, harsh light, portraits", "Strong monochrome direction. Use if the reference is already nearly colourless or very contrasty."),
     _preset("Acros - Soft B&W Portrait", "black white soft", "Acros + Ye Filter", "BOTH", "Weak Small", "Off", "Off", "Auto", 0, 0, "DR400", -1, 1, 0, 0, -3, 0, "Auto up to 3200", "+1/3", {"warmth": .50, "tint": .50, "sat": .03, "contrast": .45, "brightness": .58, "softness": .70, "vintage": .55, "cinematic": .55}, "soft B&W portraits, documentary", "Lower contrast B&W starting point."),
     _preset("Sepia - Aged Warm", "sepia vintage", "Sepia", "BOTH", "Weak Small", "Off", "Off", "Auto", 0, 0, "DR200", -1, 1, 0, -1, -2, 1, "Auto", "0", {"warmth": .82, "tint": .52, "sat": .16, "contrast": .46, "brightness": .52, "softness": .62, "vintage": .90, "cinematic": .42}, "intentionally aged warm monochrome", "Only use when the reference has a clear sepia/brown monochrome look."),
+
+    # Legacy-friendly look directions for X-Trans I, II and III bodies.
+    _preset("Pro Neg. Hi - Legacy Contrast", "legacy portrait contrast", "Pro Neg. Hi", "BOTH", "Off", "Off", "Off", "Auto", 1, -1, "DR200", 1, 1, 1, 0, -2, 0, "Auto up to 1600", "0", {"warmth": .55, "tint": .50, "sat": .48, "contrast": .64, "brightness": .50, "softness": .38, "vintage": .35, "cinematic": .38}, "older Fujifilm bodies, portraits, documentary, contrasty daylight", "A strong older-body option when Classic Negative or Eterna is unavailable."),
+    _preset("Pro Neg. Std - Legacy Soft Print", "legacy soft print", "Pro Neg. Std", "BOTH", "Off", "Off", "Off", "Auto", 1, -2, "DR200", -1, 0, 0, -1, -2, 0, "Auto up to 1600", "+1/3", {"warmth": .58, "tint": .51, "sat": .35, "contrast": .34, "brightness": .60, "softness": .82, "vintage": .52, "cinematic": .42}, "X-Trans I/II/III portraits, weddings, gentle daylight", "A soft legacy starting point with gentle colour and forgiving contrast."),
+    _preset("Monochrome - Legacy Deep Contrast", "legacy black white contrast", "Monochrome + R Filter", "BOTH", "Off", "Off", "Off", "Auto", 0, 0, "DR400", 1, 2, 0, 1, -2, 0, "Auto up to 3200", "0", {"warmth": .50, "tint": .50, "sat": .02, "contrast": .80, "brightness": .40, "softness": .26, "vintage": .58, "cinematic": .72}, "X-Trans I/II black-and-white street, harsh daylight, architecture", "Legacy monochrome alternative for bodies without Acros."),
+    _preset("Monochrome - Legacy Soft B&W", "legacy black white soft", "Monochrome + Ye Filter", "BOTH", "Off", "Off", "Off", "Auto", 0, 0, "DR200", -1, 1, 0, 0, -2, 0, "Auto up to 1600", "+1/3", {"warmth": .50, "tint": .50, "sat": .03, "contrast": .42, "brightness": .58, "softness": .72, "vintage": .55, "cinematic": .50}, "X-Trans I/II soft B&W portraits and documentary", "A gentler monochrome option for older Fujifilm bodies."),
 ]
 
 # Add small family variations programmatically without pretending they are exact film stocks.
@@ -335,8 +406,59 @@ def dominant_palette(rgb: np.ndarray, k: int = 5) -> List[str]:
 
 # ---------------- Matching + Tuning ----------------
 def sensor_presets(sensor_code: str) -> List[RecipePreset]:
-    sims = XTRANS_V_SIMS if sensor_code == "V" else XTRANS_IV_SIMS
-    return [p for p in ALL_PRESETS if (p.sensor in ["BOTH", sensor_code]) and p.film_simulation in sims]
+    sims = SENSOR_SIM_MAP.get(sensor_code, XTRANS_V_SIMS)
+    return [p for p in ALL_PRESETS if (p.sensor in ["BOTH", "ALL", sensor_code]) and p.film_simulation in sims]
+
+
+def format_signed(value: Any) -> str:
+    if isinstance(value, (int, np.integer)):
+        return f"{int(value):+d}"
+    return str(value)
+
+
+def sensor_capability_note(sensor_code: str) -> str:
+    if sensor_code == "I":
+        return "X-Trans I mode removes newer JPEG settings such as Acros, Classic Chrome, Color Chrome, Grain size and Clarity. Tone/colour values are kept within older-body ranges."
+    if sensor_code == "II":
+        return "X-Trans II mode keeps older-body settings conservative. Classic Chrome availability can depend on camera/firmware, while Color Chrome FX Blue and Clarity are removed."
+    if sensor_code == "III":
+        return "X-Trans III mode removes Color Chrome FX Blue and Clarity. Grain size is simplified to Off / Weak / Strong."
+    if sensor_code == "IV":
+        return "X-Trans IV mode keeps modern controls such as Grain size, Color Chrome Effect, Color Chrome FX Blue and Clarity, while excluding X-Trans V-only simulations."
+    return "X-Trans V mode enables the widest simulation set, including Nostalgic Negative and Reala Ace where applicable."
+
+
+def simplify_grain_for_sensor(grain: str, sensor_code: str) -> str:
+    if sensor_code in ["I", "II"]:
+        return "Not available"
+    if sensor_code == "III":
+        if "Strong" in grain:
+            return "Strong"
+        if "Weak" in grain:
+            return "Weak"
+        return "Off"
+    return grain
+
+
+def sanitize_recipe_for_sensor(recipe: Dict[str, Any], sensor_code: str) -> Dict[str, Any]:
+    r = dict(recipe)
+    r["sensor_generation"] = SENSOR_LABEL_MAP.get(sensor_code, sensor_code)
+    r["sensor_note"] = sensor_capability_note(sensor_code)
+
+    if sensor_code in LEGACY_SENSORS:
+        for key in ["highlights", "shadows", "color", "sharpness", "noise_reduction"]:
+            if isinstance(r.get(key), (int, np.integer)):
+                r[key] = int(np.clip(r[key], -2, 2))
+        r["color_chrome_effect"] = "Not available"
+        r["color_chrome_fx_blue"] = "Not available"
+        r["clarity"] = "Not available"
+        r["grain_effect"] = simplify_grain_for_sensor(r.get("grain_effect", "Off"), sensor_code)
+
+    if r.get("film_simulation") not in SENSOR_SIM_MAP.get(sensor_code, []):
+        r["film_simulation"] = "Provia / Standard"
+        r["name"] = f"{r.get('name', 'Custom')} / Legacy Fallback"
+
+    return r
 
 
 def score_preset(features: Dict[str, Any], preset: RecipePreset) -> Tuple[float, Dict[str, float]]:
@@ -386,6 +508,7 @@ def recommend(features: Dict[str, Any], sensor_code: str) -> Dict[str, Any]:
     alts = candidates[1:5]
 
     recipe = tune_recipe_from_features(best["preset"], features)
+    recipe = sanitize_recipe_for_sensor(recipe, sensor_code)
     guidance = build_guidance(features, recipe)
     summary = visual_summary(features)
 
@@ -531,12 +654,12 @@ def recipe_txt(recipe: Dict[str, Any], result: Dict[str, Any] = None) -> str:
     lines.append(f"Dynamic Range        : {recipe.get('dynamic_range')}")
     lines.append(f"White Balance        : {recipe.get('white_balance')}")
     lines.append(f"WB Shift             : R {recipe.get('wb_shift_r'):+d}, B {recipe.get('wb_shift_b'):+d}")
-    lines.append(f"Highlight            : {recipe.get('highlights'):+d}")
-    lines.append(f"Shadow               : {recipe.get('shadows'):+d}")
-    lines.append(f"Color                : {recipe.get('color'):+d}")
-    lines.append(f"Sharpness            : {recipe.get('sharpness'):+d}")
-    lines.append(f"Noise Reduction      : {recipe.get('noise_reduction'):+d}")
-    lines.append(f"Clarity              : {recipe.get('clarity'):+d}")
+    lines.append(f"Highlight            : {format_signed(recipe.get('highlights'))}")
+    lines.append(f"Shadow               : {format_signed(recipe.get('shadows'))}")
+    lines.append(f"Color                : {format_signed(recipe.get('color'))}")
+    lines.append(f"Sharpness            : {format_signed(recipe.get('sharpness'))}")
+    lines.append(f"Noise Reduction      : {format_signed(recipe.get('noise_reduction'))}")
+    lines.append(f"Clarity              : {format_signed(recipe.get('clarity'))}")
     lines.append(f"Grain Effect         : {recipe.get('grain_effect')}")
     lines.append(f"Color Chrome Effect  : {recipe.get('color_chrome_effect')}")
     lines.append(f"Color Chrome FX Blue : {recipe.get('color_chrome_fx_blue')}")
@@ -634,7 +757,7 @@ st.markdown(
       <div class="hero-inner">
         <div class="lux-mark">◆ FUJI LOOK ASSISTANT</div>
         <h1>Premium Fujifilm JPEG<br/>look direction studio.</h1>
-        <p>Upload a reference image and receive a refined Fujifilm recipe direction, visual diagnosis, and sensor-safe starting point for X-Trans IV or X-Trans V.</p>
+        <p>Upload a reference image and receive a refined Fujifilm recipe direction, visual diagnosis, and sensor-safe starting point for X-Trans I, II, III, IV, or V.</p>
       </div>
     </div>
     """,
@@ -643,14 +766,15 @@ st.markdown(
 
 with st.sidebar:
     st.markdown("## 🎛️ Camera Target")
-    sensor_choice = st.radio("Sensor generation", ["X-Trans V", "X-Trans IV"], index=0)
-    sensor_code = "V" if sensor_choice == "X-Trans V" else "IV"
-    sims = XTRANS_V_SIMS if sensor_code == "V" else XTRANS_IV_SIMS
+    sensor_choice = st.radio("Sensor generation", ["X-Trans V", "X-Trans IV", "X-Trans III", "X-Trans II", "X-Trans I"], index=0)
+    sensor_code = sensor_choice.replace("X-Trans ", "")
+    sims = SENSOR_SIM_MAP.get(sensor_code, XTRANS_V_SIMS)
     st.markdown(f"**{len(sims)}** film simulation menu items")
     st.markdown(f"**{len(sensor_presets(sensor_code))}** look directions")
+    st.caption(sensor_capability_note(sensor_code))
     st.divider()
     st.markdown("## 🧭 Studio Note")
-    st.caption("Fuji Look Assistant recommends a refined starting point based on colour, tone, contrast, mood, and sensor compatibility.")
+    st.caption("Fuji Look Assistant recommends a refined starting point based on colour, tone, contrast, mood, and sensor compatibility. Older X-Trans bodies automatically hide unsupported newer settings.")
 
 left, right = st.columns([.92, 1.08], gap="large")
 
@@ -703,7 +827,7 @@ with right:
         st.subheader("What you’ll get")
         st.markdown("""
         - Closest Fujifilm **look direction**
-        - Sensor-safe recipe for **X-Trans IV** or **X-Trans V**
+        - Sensor-safe recipe for **X-Trans I, II, III, IV, or V**
         - Top alternative film simulations
         - Practical notes for the selected look direction
         - TXT + JSON export
@@ -717,6 +841,7 @@ with right:
         st.markdown(f"<span class='badge fit-badge'>{fit_label(result['best_score'])}</span>", unsafe_allow_html=True)
         st.markdown(f"<h2 class='recipe-title'>{recipe['name']}</h2>", unsafe_allow_html=True)
         st.markdown(f"<p class='small-muted'>{recipe.get('notes','')}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p class='small-muted'><strong>Sensor compatibility:</strong> {recipe.get('sensor_note', '')}</p>", unsafe_allow_html=True)
 
         m1, m2, m3 = st.columns(3)
         with m1:
@@ -732,12 +857,12 @@ with right:
                 ("Film Simulation", recipe["film_simulation"]),
                 ("Color Chrome Effect", recipe["color_chrome_effect"]),
                 ("Color Chrome FX Blue", recipe["color_chrome_fx_blue"]),
-                ("Color", f"{recipe['color']:+d}"),
+                ("Color", format_signed(recipe["color"])),
             ],
             "Tone": [
                 ("Dynamic Range", recipe["dynamic_range"]),
-                ("Highlight", f"{recipe['highlights']:+d}"),
-                ("Shadow", f"{recipe['shadows']:+d}"),
+                ("Highlight", format_signed(recipe["highlights"])),
+                ("Shadow", format_signed(recipe["shadows"])),
                 ("Exposure Comp", recipe["exposure_comp"]),
             ],
             "White Balance": [
@@ -747,9 +872,9 @@ with right:
             ],
             "Texture": [
                 ("Grain Effect", recipe["grain_effect"]),
-                ("Sharpness", f"{recipe['sharpness']:+d}"),
-                ("Noise Reduction", f"{recipe['noise_reduction']:+d}"),
-                ("Clarity", f"{recipe['clarity']:+d}"),
+                ("Sharpness", format_signed(recipe["sharpness"])),
+                ("Noise Reduction", format_signed(recipe["noise_reduction"])),
+                ("Clarity", format_signed(recipe["clarity"])),
             ],
         }
         for title, rows in sections.items():
@@ -814,7 +939,7 @@ st.markdown(
           <span><span class="social-name">Gmail</span><span class="social-handle">halim.jamal91@gmail.com</span></span>
         </a>
       </div>
-      <div class="footer-note">Fuji Look Assistant is a practical recipe direction tool. Real camera output still depends on lighting, exposure, lens, sensor, white balance, and the JPEG engine.</div>
+      <div class="footer-note">Fuji Look Assistant is a practical recipe direction tool. Real camera output still depends on lighting, exposure, lens, sensor generation, white balance, camera body/firmware, and the JPEG engine.</div>
     </div>
     """,
     unsafe_allow_html=True,
