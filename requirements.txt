@@ -1,0 +1,6 @@
+streamlit
+opencv-python-headless
+numpy
+pillow
+colour-science
+scikit-image
