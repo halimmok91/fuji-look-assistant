@@ -135,4 +135,4 @@ Availability of some film simulations and JPEG settings may vary depending on fi
 For the latest version, use:
 
 ```txt
-fuji_look_assistant_black_gold_colour_story_v4.py
+fuji_look_assistant.py
