@@ -28,7 +28,7 @@ warnings.filterwarnings("ignore")
 # A realistic Fujifilm recipe direction + tuning assistant.
 # ==========================================================
 
-APP_VERSION = "2.4-tone-color-safe"
+APP_VERSION = "2.5-curated-baseline"
 
 # Sensor-safe film simulation menus. Some individual camera bodies/firmware may vary,
 # but these lists keep recommendations realistic for each X-Trans generation.
@@ -1318,63 +1318,40 @@ def apply_fuji_safe_tone_color_guardrails(recipe: Dict[str, Any], features: Dict
 
 
 def tune_recipe_from_features(p: RecipePreset, features: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Curated Baseline Engine v6.
+
+    Important change: the app no longer converts image measurements directly into
+    Highlight / Shadow / Color / WB settings. That approach was the source of bad
+    recipes: highlights got over-protected or harsh, shadows got crushed or lifted,
+    and colours drifted away from usable Fujifilm JPEG behaviour.
+
+    In this version, analysis is used only to CHOOSE the closest curated Fuji look.
+    The actual camera settings remain the preset's conservative baseline. This makes
+    recommendations less "clever" but more reliable as a starting point for real cameras.
+    """
     recipe = asdict(p)
     recipe.pop("target", None)
 
-    # Conservative generator v5: use the preset as a Fuji-safe base and make only
-    # small, evidence-driven changes. The goal is a usable starting recipe, not
-    # a mathematically overfit response to one edited reference image.
-    warmth = float(features.get("warmth", .5))
-    tint = float(features.get("tint", .5))
-    sat = float(features.get("sat", .5))
-    contrast = float(features.get("contrast", .5))
-    brightness = float(features.get("brightness", .5))
-    softness = float(features.get("softness", .5))
-    low_colour = float(features.get("low_colour", .0))
-    dark_ratio = float(features.get("dark_ratio", .0))
-    highlight_ratio = float(features.get("highlight_ratio", .0))
+    recipe["highlights"] = int(np.clip(_fuji_int(recipe.get("highlights", 0)), -2, 1))
+    recipe["shadows"] = int(np.clip(_fuji_int(recipe.get("shadows", 0)), -1, 2))
+    recipe["color"] = int(np.clip(_fuji_int(recipe.get("color", 0)), -1, 2))
+    recipe["sharpness"] = int(np.clip(_fuji_int(recipe.get("sharpness", 0)), -2, 1))
+    recipe["noise_reduction"] = int(np.clip(_fuji_int(recipe.get("noise_reduction", -4)), -4, -1))
+    recipe["clarity"] = int(np.clip(_fuji_int(recipe.get("clarity", 0)), -2, 2))
+    recipe["wb_shift_r"] = int(np.clip(_fuji_int(recipe.get("wb_shift_r", 0)), -4, 4))
+    recipe["wb_shift_b"] = int(np.clip(_fuji_int(recipe.get("wb_shift_b", 0)), -5, 4))
 
-    # WB: only shift if the reference is clearly warm/cool/tinted. This prevents
-    # common failures where skin and neutrals become orange, cyan, green, or magenta.
-    if warmth > .74:
-        recipe["wb_shift_r"] = _fuji_int(recipe["wb_shift_r"]) + 1
-        recipe["wb_shift_b"] = _fuji_int(recipe["wb_shift_b"]) - 1
-    elif warmth < .28:
-        recipe["wb_shift_r"] = _fuji_int(recipe["wb_shift_r"]) - 1
-        recipe["wb_shift_b"] = _fuji_int(recipe["wb_shift_b"]) + 1
+    # Safer DR policy. DR200/DR400 are more forgiving for unknown lighting than DR100.
+    if recipe.get("dynamic_range") == "DR100":
+        recipe["dynamic_range"] = "DR200"
 
-    if tint < .36:  # clearly green leaning reference
-        recipe["wb_shift_r"] = _fuji_int(recipe["wb_shift_r"]) - 1
-    elif tint > .64:  # clearly magenta leaning reference
-        recipe["wb_shift_r"] = _fuji_int(recipe["wb_shift_r"]) + 1
+    # Conservative exposure suggestion only. Exposure is camera/scene dependent.
+    if str(recipe.get("exposure_comp", "0")) not in {"-1/3", "0", "+1/3", "+2/3"}:
+        recipe["exposure_comp"] = "0"
 
-    # Color: small changes only. Fuji Color +2/+3 can become very wrong across scenes.
-    if sat > .76 and low_colour < .22:
-        recipe["color"] = _fuji_int(recipe["color"]) + 1
-    elif sat < .26 or low_colour > .70:
-        recipe["color"] = _fuji_int(recipe["color"]) - 1
-
-    # Tone: respond to contrast carefully. Highlight protection comes later.
-    if contrast > .80 and dark_ratio < .32:
-        recipe["shadows"] = _fuji_int(recipe["shadows"]) + 1
-    elif contrast < .36:
-        recipe["shadows"] = _fuji_int(recipe["shadows"]) - 1
-        recipe["highlights"] = _fuji_int(recipe["highlights"]) - 1
-
-    # Brightness: never brighten by crushing highlights; use DR/highlight protection.
-    if brightness > .68 or highlight_ratio > .10:
-        recipe["highlights"] = _fuji_int(recipe["highlights"]) - 1
-    elif brightness < .30 and dark_ratio < .35:
-        recipe["shadows"] = _fuji_int(recipe["shadows"]) + 1
-
-    # Detail: more conservative than previous version.
-    if softness > .74:
-        recipe["clarity"] = _fuji_int(recipe["clarity"]) - 1
-        recipe["sharpness"] = _fuji_int(recipe["sharpness"]) - 1
-    elif softness < .24:
-        recipe["clarity"] = _fuji_int(recipe["clarity"]) + 1
-
-    return apply_fuji_safe_tone_color_guardrails(recipe, features)
+    recipe["notes"] = (recipe.get("notes", "") + " Curated baseline mode: image analysis selects the look direction; settings are not over-fitted to the uploaded image.").strip()
+    return recipe
 
 def visual_summary(features: Dict[str, Any]) -> str:
     tags = features.get("tags", [])
@@ -1454,28 +1431,30 @@ def _safe_int_delta(value, delta, lo=-4, hi=4):
 
 
 def build_recipe_variants(recipe: Dict[str, Any], sensor_code: str) -> List[Dict[str, Any]]:
-    """Create practical subtle / balanced / strong versions of the same direction."""
+    """Create conservative subtle / balanced / strong versions without breaking tone/color."""
     variants = []
     profiles = [
-        ("Subtle", {"color": -1, "shadows": -1, "highlights": 0, "clarity": -1, "sharpness": -1, "wb_shift_scale": 0.75}),
+        ("Subtle", {"color": -1, "shadows": -1, "clarity": -1, "sharpness": -1, "wb_shift_scale": 0.75}),
         ("Balanced", {"wb_shift_scale": 1.0}),
-        ("Strong", {"color": 1, "shadows": 1, "clarity": 1, "wb_shift_scale": 1.15}),
+        ("Strong", {"color": 1, "shadows": 1, "clarity": 1, "wb_shift_scale": 1.0}),
     ]
     for label, delta in profiles:
         r = dict(recipe)
         r["variant"] = label
         r["name"] = f"{recipe.get('name', 'Fuji Look')} — {label}"
-        for k in ["color", "shadows", "highlights", "clarity", "sharpness"]:
-            if k in delta:
-                r[k] = _safe_int_delta(r.get(k), delta[k], -5 if k == "clarity" else -4, 5 if k == "clarity" else 4)
+        for k in ["color", "shadows", "clarity", "sharpness"]:
+            if k in delta and isinstance(r.get(k), (int, np.integer)):
+                r[k] = int(np.clip(int(r[k]) + delta[k], -2 if k != "clarity" else -3, 2 if k != "clarity" else 3))
+        # Do not alter highlights in variants. Highlight control is too scene-sensitive.
+        r["highlights"] = int(np.clip(_fuji_int(r.get("highlights", 0)), -2, 1))
         scale = delta.get("wb_shift_scale", 1.0)
         if isinstance(r.get("wb_shift_r"), (int, np.integer)):
-            r["wb_shift_r"] = int(np.clip(round(r["wb_shift_r"] * scale), -9, 9))
+            r["wb_shift_r"] = int(np.clip(round(r["wb_shift_r"] * scale), -4, 4))
         if isinstance(r.get("wb_shift_b"), (int, np.integer)):
-            r["wb_shift_b"] = int(np.clip(round(r["wb_shift_b"] * scale), -9, 9))
+            r["wb_shift_b"] = int(np.clip(round(r["wb_shift_b"] * scale), -5, 4))
+        r["notes"] = (r.get("notes", "") + " Variant uses only mild Fuji-safe changes.").strip()
         variants.append(sanitize_recipe_for_sensor(r, sensor_code))
     return variants
-
 
 def in_camera_realism(features: Dict[str, Any], recipe: Dict[str, Any]) -> Dict[str, Any]:
     warnings = []
